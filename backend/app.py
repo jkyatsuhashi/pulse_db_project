@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import os
 from flask_mysqldb import MySQL
 from dotenv import load_dotenv
@@ -32,6 +32,10 @@ def get_db():
     cur.close()
     print(data)
 
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/api/data', methods=['POST'])
 def post_data():
