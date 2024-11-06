@@ -3,6 +3,8 @@ import os
 from flask_mysqldb import MySQL
 from dotenv import load_dotenv
 from flask_cors import CORS
+from MySQLdb.cursors import DictCursor
+from Restaurants import restaurants
 
 app = Flask(__name__)
 load_dotenv()
@@ -23,7 +25,7 @@ def get_db():
     cur = mysql.connection.cursor()
 
     # Execute a query (e.g., SELECT statement)
-    cur.execute("SELECT * FROM Foods LIMIT 4")
+    cur.execute("SELECT * FROM Restaurants LIMIT 4")
 
     # Fetch data
     data = cur.fetchall()
@@ -31,18 +33,13 @@ def get_db():
     # Close the cursor
     cur.close()
     print(data)
-
-
-@app.route('/')
-def home():
-    return render_template('index.html')
-
+    
 @app.route('/api/data', methods=['POST'])
 def post_data():
-    print("yo")
     data = request.json  # Get JSON data from the request
     print(f"Received data from frontend: {data}")
-    
+    restaurants.remove_restaurant(mysql, data)
+    restaurants.get_restaurants(mysql)
     # Process the data and create a response
     response_data = {'message': 'Data received and processed!', 'received': data}
     return jsonify(response_data)
