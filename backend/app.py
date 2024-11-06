@@ -1,9 +1,8 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 import os
 from flask_mysqldb import MySQL
 from dotenv import load_dotenv
 from flask_cors import CORS
-from MySQLdb.cursors import DictCursor
 from Restaurants import restaurants
 
 app = Flask(__name__)
@@ -34,15 +33,23 @@ def get_db():
     cur.close()
     print(data)
     
-@app.route('/api/data', methods=['POST'])
+@app.route('/api/restaurants', methods=['POST'])
 def post_data():
     data = request.json  # Get JSON data from the request
-    print(f"Received data from frontend: {data}")
-    restaurants.remove_restaurant(mysql, data)
-    restaurants.get_restaurants(mysql)
+    try:
+        method = data.get("method")
+    except:
+        error = {"status" : "error" , "message" : "no method included"}
+        return jsonify(error)
+    if method == "insert":
+        response = restaurants.insert_restaurant(mysql, data)
+    elif method == "get":
+        response = restaurants.get_restaurants(mysql)
+    elif method == "remove":
+        response = restaurants.remove_restaurant(mysql, data)
+    print(response)
     # Process the data and create a response
-    response_data = {'message': 'Data received and processed!', 'received': data}
-    return jsonify(response_data)
+    return response
 
 
 if __name__ == '__main__':

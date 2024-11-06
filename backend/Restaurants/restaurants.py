@@ -3,13 +3,15 @@ from MySQLdb.cursors import DictCursor
 from flask import jsonify
 
 def get_restaurants(mysql):
+    # Get all of the current restaurants in the database
     curr = mysql.connection.cursor(DictCursor)
     curr.execute("SELECT * FROM Restaurants")
     response = curr.fetchall()
     curr.close()
-    print(response)
-    return response
+    result = {"status" : "success", "message" : response}
+    return jsonify(result)
 def insert_restaurant(mysql, restaurant):
+    # Insert a new restaurant
     name = restaurant.get("name")
     type_ = restaurant.get("type")
     if not name or not type_:
@@ -18,7 +20,6 @@ def insert_restaurant(mysql, restaurant):
     # Insert restaurant into the Restaurants table
     curr = mysql.connection.cursor()
     try:
-        print("inserting")
         curr.execute(
             "INSERT INTO Restaurants (name, type) VALUES (%s, %s)",
             (name, type_)
@@ -32,6 +33,7 @@ def insert_restaurant(mysql, restaurant):
         return jsonify({"error": str(e)}), 500
     
 def remove_restaurant(mysql, restaurant):
+    # Remove a restaurant from the database
     name = restaurant.get("name")
     type_ = restaurant.get("type")
 
