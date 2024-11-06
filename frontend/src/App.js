@@ -5,7 +5,7 @@ function App() {
   const [response, setResponse] = useState(null);
 
   const postData = async () => {
-    const dataToSend = { name: 'React User', action: 'Sending data to Flask' };
+    const dataToSend = { method: "insert_restuarant" ,name: 'Test', type: "test", action: 'Sending data to Flask' };
     
     try {
       const res = await fetch(`http://${host}:5071/api/data`, {
