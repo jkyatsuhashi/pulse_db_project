@@ -5,10 +5,10 @@ function App() {
   const [response, setResponse] = useState(null);
 
   const postData = async () => {
-    const dataToSend = { method: "insert_restuarant" ,name: 'Test', type: "test", action: 'Sending data to Flask' };
+    const dataToSend = { method: "get" ,name: 'Test', type: "test", action: 'Sending data to Flask' };
     
     try {
-      const res = await fetch(`http://${host}:5071/api/data`, {
+      const res = await fetch(`http://${host}:5071/api/restaurants`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,7 +30,6 @@ function App() {
       {response && (
         <div>
           <p>{response.message}</p>
-          <p>Received: {JSON.stringify(response.received)}</p>
         </div>
       )}
     </div>
