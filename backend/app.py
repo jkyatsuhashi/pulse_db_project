@@ -4,6 +4,7 @@ from flask_mysqldb import MySQL
 from dotenv import load_dotenv #type: ignore
 from flask_cors import CORS #type: ignore
 from Restaurants import restaurants
+from Movies import movies
 
 app = Flask(__name__)
 load_dotenv()
@@ -34,7 +35,7 @@ def get_db():
     print(data)
     
 @app.route('/api/restaurants', methods=['POST'])
-def post_data():
+def post_restaurant_data():
     data = request.json  # Get JSON data from the request
     try:
         method = data.get("method")
@@ -50,7 +51,27 @@ def post_data():
     # Process the data and create a response
     return response
 
+@app.route('/api/movies', methods=['POST'])
+def post_movie_data():
+    data = request.json  # Get JSON data from the request
+    try:
+        method = data.get("method")
+    except:
+        error = {"status" : "error" , "message" : "no method included"}
+        return jsonify(error)
+
+    if method == "insert":
+        response = movies.insert_movie(mysql, data)
+    elif method == "get_today":
+        response = movies.get_date_movies(mysql, data)
+    elif method == "remove":
+        response = movies.remove_movie(mysql, data)
+    elif method == 'update':
+        response = movies.update_movie(mysql, data)
+    # Process the data and create a response
+    return response
+
 
 if __name__ == '__main__':
-	app.debug = True
-	app.run(host=host, port=port)
+    app.debug = True
+    app.run(host=host, port=port)
