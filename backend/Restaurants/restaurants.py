@@ -1,4 +1,3 @@
-from flask_mysqldb import MySQL
 from MySQLdb.cursors import DictCursor #type: ignore
 from flask import jsonify #type: ignore
 
