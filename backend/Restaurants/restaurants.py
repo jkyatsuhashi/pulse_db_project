@@ -35,26 +35,30 @@ def insert_restaurant(mysql, restaurant):
         curr.close()
         return jsonify({"error": str(e)}), 500
     
-def remove_restaurant(mysql, restaurant):
-    # Remove a restaurant from the database
+def update_restaurant(mysql, restaurant):
     name = restaurant.get("name")
-
     if not name:
         return jsonify({"error": "Name required"}), 400
 
-    # Delete restaurant from the Restaurants table
+    rest_data = {key: value for key, value in restaurant.items() if key != "name" and key !="method" and value != ""}
+    if not rest_data:  
+        return jsonify({"error": "No valid fields to update"}), 400
+
+    # Create dynamic SQL query and values
+    set_clause = ", ".join([f"{key} = %s" for key in rest_data.keys()])
+    values = tuple(rest_data.values()) + (name,) 
+    query = f"UPDATE Restaurants SET {set_clause} WHERE name = %s"
+
     curr = mysql.connection.cursor()
     try:
-        rows_affected = curr.execute(
-            "DELETE FROM Restaurants WHERE name = %s",
-            (name,)
-        )
+        rows_affected = curr.execute(query, values)
         mysql.connection.commit()
-        curr.close()
-        if rows_affected == 0:
-            return jsonify({"message": f"No restaurant found with name '{name}'"}), 404
-        return jsonify({"message": f"Restaurant '{name}' removed successfully"}), 200
+        if rows_affected > 0:
+            return jsonify({"message": "Restaurant updated successfully"}), 200
+        else:
+            return jsonify({"error": "Restaurant not found or no changes made"}), 404
     except Exception as e:
         mysql.connection.rollback()
-        curr.close()
         return jsonify({"error": str(e)}), 500
+    finally:
+        curr.close()

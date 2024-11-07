@@ -48,6 +48,8 @@ def post_restaurant_data():
         response = restaurants.get_restaurants(mysql)
     elif method == "remove":
         response = restaurants.remove_restaurant(mysql, data)
+    elif method == 'update':
+        response = restaurants.update_restaurant(mysql, data)
     # Process the data and create a response
     return response
 
