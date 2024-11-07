@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 import os
 from flask_mysqldb import MySQL
-from dotenv import load_dotenv
-from flask_cors import CORS
+from dotenv import load_dotenv #type: ignore
+from flask_cors import CORS #type: ignore
 from Restaurants import restaurants
 
 app = Flask(__name__)
@@ -47,7 +47,6 @@ def post_data():
         response = restaurants.get_restaurants(mysql)
     elif method == "remove":
         response = restaurants.remove_restaurant(mysql, data)
-    print(response)
     # Process the data and create a response
     return response
 
