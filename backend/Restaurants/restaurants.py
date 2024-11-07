@@ -1,15 +1,19 @@
 from flask_mysqldb import MySQL
-from MySQLdb.cursors import DictCursor
-from flask import jsonify
+from MySQLdb.cursors import DictCursor #type: ignore
+from flask import jsonify #type: ignore
 
 def get_restaurants(mysql):
-    # Get all of the current restaurants in the database
-    curr = mysql.connection.cursor(DictCursor)
-    curr.execute("SELECT * FROM Restaurants")
-    response = curr.fetchall()
-    curr.close()
-    result = {"status" : "success", "message" : response}
-    return jsonify(result)
+    try:
+        # Get all of the current restaurants in the database
+        curr = mysql.connection.cursor(DictCursor)
+        curr.execute("SELECT fk_restaurant_name as name, AVG(price) as av FROM Foods GROUP BY fk_restaurant_name ORDER BY av LIMIT 15;")
+        response = curr.fetchall()
+        curr.close()
+        result = {"status" : "success", "message" : response}
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"status" : "error" , "message" : f"Error {e}"})
+
 def insert_restaurant(mysql, restaurant):
     # Insert a new restaurant
     name = restaurant.get("name")
@@ -35,22 +39,21 @@ def insert_restaurant(mysql, restaurant):
 def remove_restaurant(mysql, restaurant):
     # Remove a restaurant from the database
     name = restaurant.get("name")
-    type_ = restaurant.get("type")
 
-    if not name or not type_:
-        return jsonify({"error": "Name and type are required"}), 400
+    if not name:
+        return jsonify({"error": "Name required"}), 400
 
     # Delete restaurant from the Restaurants table
     curr = mysql.connection.cursor()
     try:
         rows_affected = curr.execute(
-            "DELETE FROM Restaurants WHERE name = %s AND type = %s",
-            (name, type_)
+            "DELETE FROM Restaurants WHERE name = %s",
+            (name,)
         )
         mysql.connection.commit()
         curr.close()
         if rows_affected == 0:
-            return jsonify({"message": f"No restaurant found with name '{name}' and type '{type_}'"}), 404
+            return jsonify({"message": f"No restaurant found with name '{name}'"}), 404
         return jsonify({"message": f"Restaurant '{name}' removed successfully"}), 200
     except Exception as e:
         mysql.connection.rollback()
