@@ -4,7 +4,15 @@ import { Form, Button, Alert } from 'react-bootstrap';
 export default function UpdateRestaurant({ host, port, setResponse }) {
     const [restaurantData, setRestaurantData] = useState({
         name: '',
-        type: '',
+        position: '',
+        score: '',
+        ratings: '',
+        category: '',
+        price_range: '',
+        full_address: '',
+        zip_code: '',
+        lat: '',
+        lng: '',
     });
     const [status, setStatus] = useState(null); // For displaying success or error messages
 
@@ -69,15 +77,106 @@ export default function UpdateRestaurant({ host, port, setResponse }) {
                         required
                     />
                 </Form.Group>
-                <Form.Group controlId="formRestaurantType">
-                    <Form.Label>Type</Form.Label>
+
+                <Form.Group controlId="formPosition">
+                    <Form.Label>Position</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="position"
+                        value={restaurantData.position}
+                        onChange={handleInputChange}
+                        placeholder="Enter Position"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formScore">
+                    <Form.Label>Score</Form.Label>
+                    <Form.Control
+                        type="number"
+                        step="0.1"
+                        name="score"
+                        value={restaurantData.score}
+                        onChange={handleInputChange}
+                        placeholder="Enter Score"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formRatings">
+                    <Form.Label>Ratings</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="ratings"
+                        value={restaurantData.ratings}
+                        onChange={handleInputChange}
+                        placeholder="Enter Ratings"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formCategory">
+                    <Form.Label>Category</Form.Label>
                     <Form.Control
                         type="text"
-                        name="type"
-                        value={restaurantData.type}
+                        name="category"
+                        value={restaurantData.category}
                         onChange={handleInputChange}
-                        placeholder="Enter Restaurant Type"
-                        required
+                        placeholder="Enter Category"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formPriceRange">
+                    <Form.Label>Price Range</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="price_range"
+                        value={restaurantData.price_range}
+                        onChange={handleInputChange}
+                        placeholder="Enter Price Range"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formFullAddress">
+                    <Form.Label>Full Address</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="full_address"
+                        value={restaurantData.full_address}
+                        onChange={handleInputChange}
+                        placeholder="Enter Full Address"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formZipCode">
+                    <Form.Label>Zip Code</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="zip_code"
+                        value={restaurantData.zip_code}
+                        onChange={handleInputChange}
+                        placeholder="Enter Zip Code"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formLat">
+                    <Form.Label>Latitude</Form.Label>
+                    <Form.Control
+                        type="number"
+                        step="0.000001"
+                        name="lat"
+                        value={restaurantData.lat}
+                        onChange={handleInputChange}
+                        placeholder="Enter Latitude"
+                    />
+                </Form.Group>
+
+                <Form.Group controlId="formLng">
+                    <Form.Label>Longitude</Form.Label>
+                    <Form.Control
+                        type="number"
+                        step="0.000001"
+                        name="lng"
+                        value={restaurantData.lng}
+                        onChange={handleInputChange}
+                        placeholder="Enter Longitude"
                     />
                 </Form.Group>
 

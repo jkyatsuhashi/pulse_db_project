@@ -16,17 +16,22 @@ const GetComponent = ({ host, port, setResponse }) => {
           action: 'Getting list of restaurants'
         }),
       });
-      
+  
       const result = await res.json();
+      console.log(result)
       setResponse(result);
-      
-      // Assuming result.message contains the array of restaurants
-      const sortedRestaurants = [...result.message].sort((a, b) => a.av - b.av);
-      setRestaurants(sortedRestaurants);
+  
+      if (Array.isArray(result.message)) {
+        const sortedRestaurants = [...result.message].sort((a, b) => a.av - b.av);
+        setRestaurants(sortedRestaurants);
+      } else {
+        console.error("Expected result.message to be an array");
+      }
     } catch (error) {
-    
+      console.error("Error fetching restaurants:", error);
     }
   };
+  
 
   return (
     <Container className="mt-4">
@@ -48,12 +53,11 @@ const GetComponent = ({ host, port, setResponse }) => {
           {restaurants.length > 0 && (
             <Card className="mt-4">
               <Card.Body>
-                <Card.Title className="text-center">Restaurants (Sorted by Price)</Card.Title>
+                <Card.Title className="text-center">Top 20 Cheap Options</Card.Title>
                 <ListGroup variant="flush">
                   {restaurants.map((restaurant, index) => (
                     <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
                       <span className="font-weight-bold">{restaurant.name}</span>
-                      <span className="text-muted">${restaurant.av.toFixed(2)}</span>
                     </ListGroup.Item>
                   ))}
                 </ListGroup>

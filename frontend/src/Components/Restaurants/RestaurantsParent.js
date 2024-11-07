@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import GetComponent from './GetComponent';
 import InsertDelete from './InsertDelete';
-import UpdateRestaurant from './UpdateRestaurant'; // Import the UpdateRestaurant component
+import UpdateRestaurant from './UpdateRestaurant';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 
 export default function RestaurantsParent({ host, port }) {
@@ -26,7 +26,7 @@ export default function RestaurantsParent({ host, port }) {
                             <option value="insert">Insert Restaurant</option>
                             <option value="remove">Remove Restaurant</option>
                             <option value="get">Get Restaurants</option>
-                            <option value="update">Update Restaurant</option> {/* Added Update option */}
+                            <option value="update">Update Restaurant</option> 
                         </Form.Control>
                     </Form.Group>
                     {action === "get" ? ( 

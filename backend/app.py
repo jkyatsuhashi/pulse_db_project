@@ -20,20 +20,6 @@ app.config['MYSQL_DB'] = os.getenv('SQL_DB')
 mysql = MySQL(app)
 CORS(app)
 
-def get_db():
-    # Create a cursor object
-    cur = mysql.connection.cursor()
-
-    # Execute a query (e.g., SELECT statement)
-    cur.execute("SELECT * FROM Restaurants LIMIT 4")
-
-    # Fetch data
-    data = cur.fetchall()
-
-    # Close the cursor
-    cur.close()
-    print(data)
-    
 @app.route('/api/restaurants', methods=['POST'])
 def post_restaurant_data():
     data = request.json  # Get JSON data from the request

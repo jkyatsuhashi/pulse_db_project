@@ -3,29 +3,49 @@ from flask import jsonify #type: ignore
 
 def get_restaurants(mysql):
     try:
-        # Get all of the current restaurants in the database
+        # Get top 20 restaurants with price_range '$'
         curr = mysql.connection.cursor(DictCursor)
-        curr.execute("SELECT fk_restaurant_name as name, AVG(price) as av FROM Foods GROUP BY fk_restaurant_name ORDER BY av LIMIT 15;")
+        curr.execute(
+            """
+            SELECT name, position, score, ratings, category, price_range, full_address, zip_code, lat, lng 
+            FROM restaurants 
+            WHERE price_range = '$'
+            ORDER BY score DESC 
+            LIMIT 20;
+            """
+        )
         response = curr.fetchall()
         curr.close()
-        result = {"status" : "success", "message" : response}
+
+        result = {"status": "success", "message": response}
         return jsonify(result)
     except Exception as e:
-        return jsonify({"status" : "error" , "message" : f"Error {e}"})
-
+        return jsonify({"status": "error", "message": f"Error {e}"})
+    
 def insert_restaurant(mysql, restaurant):
-    # Insert a new restaurant
     name = restaurant.get("name")
-    type_ = restaurant.get("type")
-    if not name or not type_:
-        return jsonify({"error": "Name and type are required"}), 400
+    position = restaurant.get("position")
+    score = restaurant.get("score")
+    ratings = restaurant.get("ratings")
+    category = restaurant.get("category")
+    price_range = restaurant.get("price_range")
+    full_address = restaurant.get("full_address")
+    zip_code = restaurant.get("zip_code")
+    lat = restaurant.get("lat")
+    lng = restaurant.get("lng")
+    # Validate required fields
+    if not name:
+        return jsonify({"error": "Name is required"}), 400
 
-    # Insert restaurant into the Restaurants table
+    # Insert restaurant into the restaurants table
     curr = mysql.connection.cursor()
     try:
         curr.execute(
-            "INSERT INTO Restaurants (name, type) VALUES (%s, %s)",
-            (name, type_)
+            """
+            INSERT INTO restaurants (position, name, score, ratings, category, price_range, full_address, zip_code, lat, lng)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (position, name, score, ratings, category, price_range, full_address, zip_code, lat, lng)
         )
         mysql.connection.commit()
         curr.close()
@@ -34,20 +54,51 @@ def insert_restaurant(mysql, restaurant):
         mysql.connection.rollback()
         curr.close()
         return jsonify({"error": str(e)}), 500
+
+def remove_restaurant(mysql, restaurant):
     
+    name = restaurant.get("name")
+    # Check if name is provided
+    if not name:
+        return jsonify({"error": "Restaurant name is required"}), 400
+
+
+    curr = mysql.connection.cursor()
+    try:
+
+        curr.execute("SELECT * FROM restaurants WHERE name = %s", (name,))
+        restaurant_exists = curr.fetchone()
+        
+        if not restaurant_exists:
+            return jsonify({"error": f"Restaurant '{name}' not found"}), 404
+        
+        # Perform the deletion
+        curr.execute("DELETE FROM restaurants WHERE name = %s", (name,))
+        mysql.connection.commit()
+        curr.close()
+        return jsonify({"message": f"Restaurant '{name}' removed successfully"}), 200
+    except Exception as e:
+        mysql.connection.rollback()
+        curr.close()
+        return jsonify({"error": str(e)}), 500 
+
+
 def update_restaurant(mysql, restaurant):
     name = restaurant.get("name")
+    
+    # Require a name to identify which restaurant to update
     if not name:
         return jsonify({"error": "Name required"}), 400
 
-    rest_data = {key: value for key, value in restaurant.items() if key != "name" and key !="method" and value != ""}
+    # Filter out invalid or unnecessary fields for updating
+    rest_data = {key: value for key, value in restaurant.items() if key != "name" and key != "method" and value != ""}
     if not rest_data:  
         return jsonify({"error": "No valid fields to update"}), 400
+    print(rest_data)
 
-    # Create dynamic SQL query and values
     set_clause = ", ".join([f"{key} = %s" for key in rest_data.keys()])
-    values = tuple(rest_data.values()) + (name,) 
-    query = f"UPDATE Restaurants SET {set_clause} WHERE name = %s"
+    values = tuple(rest_data.values()) + (name,)
+    query = f"UPDATE restaurants SET {set_clause} WHERE name = %s"
 
     curr = mysql.connection.cursor()
     try:
