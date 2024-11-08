@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "PORT=5701 HOST='db8.cse.nd.edu' react-scripts start",
-    "build": "react-scripts build --host db8.cse.nd.edu --port 5701",
+    "build": "PORT=5701 HOST='db8.cse.nd.edu' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
