@@ -112,7 +112,8 @@ teams = {
    },
    "Indiana Men's Soccer": {
        "sport":"Soccer",
-       "location": "1606 N. Fee Lane, Bloomington, IN 47408"
+       "location": "1606 N. Fee Lane, Bloomington, IN 47408",
+       "conference": "B1G"
    },
    "Indiana Women's Soccer": {
        "sport":"Soccer",
@@ -138,4 +139,3 @@ for team, info in teams.items():
     else:
         opponent = random.choice(bigTenOpponents)
     location = info["location"]
-
