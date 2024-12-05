@@ -1,5 +1,7 @@
 from flask import Flask
 from flask_mysqldb import MySQL
+from datetime import datetime, timedelta
+import random
 import os
 
 
@@ -9,8 +11,6 @@ app.config['MYSQL_USER'] = os.getenv('SQL_USER')
 app.config['MYSQL_PASSWORD'] = os.getenv('SQL_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('SQL_DB')
 mysql = MySQL(app)
-from datetime import datetime, timedelta
-import random
 
 teams = {
    "Notre Dame Football": {
@@ -120,7 +120,8 @@ teams = {
    },
    "Indiana Men's Soccer": {
        "sport":"Soccer",
-       "location": "1606 N. Fee Lane, Bloomington, IN 47408"
+       "location": "1606 N. Fee Lane, Bloomington, IN 47408",
+       "conference":"B1G"
    },
    "Indiana Women's Soccer": {
        "sport":"Soccer",
@@ -135,7 +136,7 @@ teams = {
 }
 
 start_date = datetime(2024, 12, 5)
-num_events = 40
+num_events = 100
 
 accOpponents = ["Florida State", "Boston College", "Clemson", "Duke", "Georiga Tech", "Virginia", "North Carolina", "Louisville", "Miami", "NC State", "SMU", "Pittsburgh", "Virginia Tech", "Wake Forest", "Syracuse"]
 bigTenOpponents = ["Illinois", "Iowa", "Maryland", "Michigan State", "Michigan", "Nebraska", "Northwestern", "Ohio State", "Oregon", "Penn State", "Purdue", "Rutgers", "Indiana", "USC", "UCLA", "Washington", "Wisconsin", "Indiana"]
@@ -146,8 +147,11 @@ for i in range(num_events):
         sport_type = info["sport"]
         if info["conference"] == "ACC":
             opponent = random.choice(accOpponents)
-        else:
+        elif info["conference"] == "B1G":
             opponent = random.choice(bigTenOpponents)
+        else:
+            opponent = random.choice(bigTenOpponents + accOpponents)
+            
         location = info["location"]
         curr = mysql.connection.cursor()
         try:
