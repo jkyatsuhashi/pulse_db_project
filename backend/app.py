@@ -5,7 +5,7 @@ from dotenv import load_dotenv #type: ignore
 from flask_cors import CORS #type: ignore
 from Restaurants import restaurants
 from Movies import movies
-
+from Sports import sports
 app = Flask(__name__)
 load_dotenv()
 
@@ -56,6 +56,25 @@ def post_movie_data():
         response = movies.remove_movie(mysql, data)
     elif method == 'update':
         response = movies.update_movie(mysql, data)
+    # Process the data and create a response
+    return response
+
+@app.route('/api/sports', methods=['POST'])
+def post_sports_data():
+    data = request.json  # Get JSON data from the request
+    try:
+        method = data.get("method")
+    except:
+        error = {"status" : "error" , "message" : "no method included"}
+        return jsonify(error)
+    if method == "get":
+        response = sports.get_sports(mysql)
+    elif method == "remove":
+        response = sports.remove_sport(mysql, data)
+    elif method == 'update':
+        response = sports.update_sport(mysql, data)
+    elif method == 'insert':
+        response = sports.insert_sport(mysql, data)
     # Process the data and create a response
     return response
 
