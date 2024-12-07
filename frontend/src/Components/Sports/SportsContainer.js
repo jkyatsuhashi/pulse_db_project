@@ -1,7 +1,7 @@
-export default function SportsContainer() {
+import SportsParent from './SportsParent'
+
+export default function SportsContainer({host, port}) {
     return (
-        <div>
-            <h1>hi</h1>
-        </div>
+        <SportsParent host={host} port={port} />
     )
 }

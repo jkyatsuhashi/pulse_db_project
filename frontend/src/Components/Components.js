@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container } from "react-bootstrap";
-import DrinksContainer from "./Drinks/DrinksContainer";
 import MoviesContainer from "./Movies/MoviesContainer";
 import RestaurantsContainer from "./Restaurants/RestaurantsContainer";
 import SportsContainer from "./Sports/SportsContainer";
@@ -29,7 +28,6 @@ const Components = () => {
               <Nav.Link href="/restaurants" className="ms-3">Restaurants</Nav.Link>
               <Nav.Link href="/movies" className="ms-3">Movies</Nav.Link>
               <Nav.Link href="/sports" className="ms-3">Sports</Nav.Link>
-              <Nav.Link href="/drinks" className="ms-3">Drinks</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -40,7 +38,6 @@ const Components = () => {
         <Route path="/restaurants" element={<RestaurantsContainer host={host} port={port} />} />
         <Route path="/movies" element={<MoviesContainer host={host} port={port} />} />
         <Route path="/sports" element={<SportsContainer host={host} port={port} />} />
-        <Route path="/drinks" element={<DrinksContainer host={host} port={port} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
