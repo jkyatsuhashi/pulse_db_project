@@ -6,6 +6,7 @@ from flask_cors import CORS #type: ignore
 from Restaurants import restaurants
 from Movies import movies
 from Sports import sports
+from Calendar import calendar
 from Auth import auth
 app = Flask(__name__)
 load_dotenv()
@@ -88,6 +89,25 @@ def post_sports_data():
         response = sports.insert_sport(mysql, data)
     # Process the data and create a response
     return response
+
+
+#TODO Figure out how to get user_id
+@app.route('/api/calendar', methods=["POST"])
+def post_calendar_date():
+    data = request.json
+    try:
+        method = data.get("method")
+    except:
+        error = {"status":"error", "message":"no method included"}
+        return jsonify(error)
+    if method == "get":
+        response = calendar.get_calendar(mysql, user_id=None) 
+    elif method == "remove":
+        response = calendar.remove_event(mysql, user_id, data)
+    elif method == "update":
+        response = calendar.update_event(mysql, user_id, event_id, data)
+    elif method == "insert":
+        response = calendar.insert_event(mysql, userid, data)
 
 
 if __name__ == '__main__':
