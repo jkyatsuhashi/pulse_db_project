@@ -6,11 +6,12 @@ from flask_cors import CORS #type: ignore
 from Restaurants import restaurants
 from Movies import movies
 from Sports import sports
+from Auth import auth
 app = Flask(__name__)
 load_dotenv()
 
 host = "db8.cse.nd.edu"
-port = 5071
+port = 5075
 
 # Configure database connection
 app.config['MYSQL_HOST'] = 'localhost'
@@ -19,6 +20,17 @@ app.config['MYSQL_PASSWORD'] = os.getenv('SQL_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('SQL_DB')
 mysql = MySQL(app)
 CORS(app)
+
+@app.route('/api/login', methods=["POST"])
+def get_user():
+    data = request.json
+    print(data)
+    method = data.get("method")
+    if method == "login":
+        response = auth.login(mysql, data)
+    elif method == "register":
+        response = auth.register(mysql, data)
+    return response
 
 @app.route('/api/restaurants', methods=['POST'])
 def post_restaurant_data():
@@ -34,7 +46,7 @@ def post_restaurant_data():
         response = restaurants.get_restaurants(mysql)
     elif method == "remove":
         response = restaurants.remove_restaurant(mysql, data)
-    elif method == 'update':
+    else:
         response = restaurants.update_restaurant(mysql, data)
     # Process the data and create a response
     return response
@@ -47,14 +59,13 @@ def post_movie_data():
     except:
         error = {"status" : "error" , "message" : "no method included"}
         return jsonify(error)
-
     if method == "insert":
         response = movies.insert_movie(mysql, data)
     elif method == "get_today":
         response = movies.get_date_movies(mysql, data)
     elif method == "remove":
         response = movies.remove_movie(mysql, data)
-    elif method == 'update':
+    else:
         response = movies.update_movie(mysql, data)
     # Process the data and create a response
     return response
