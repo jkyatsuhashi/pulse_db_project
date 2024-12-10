@@ -7,7 +7,7 @@ import DateCellRender from './components/DateCell/DateCellRender.js';
 
 const { Text } = Typography;
 
-const CalendarChild = ({ events = [] }) => {
+const CalendarChild = ({ events = [], onRemoveEvent }) => {
     const [view, setView] = useState('month');
     const [selectedDate, setSelectedDate] = useState(null);
     const navigate = useNavigate();
@@ -52,6 +52,7 @@ const CalendarChild = ({ events = [] }) => {
                                         value={value} 
                                         events={events} 
                                         handleEventClick={handleEventClick}
+                                        onRemoveEvent={onRemoveEvent}
                                     />
                                 );
                             }

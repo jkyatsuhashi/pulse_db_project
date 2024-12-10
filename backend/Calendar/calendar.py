@@ -7,9 +7,13 @@ def get_calendar(mysql, data):
     if not user_id:
         return jsonify({"error": "user_id is required"}), 400
 
+    location = data.get("location")
+    date_str = data.get("date")
+    title = data.get("title")
+    event_type = data.get("type")
+
     cursor = mysql.connection.cursor(DictCursor)
 
-   
     cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (user_id,))
     if cursor.fetchone()["cnt"] == 0:
         cursor.close()
@@ -24,7 +28,16 @@ def get_calendar(mysql, data):
         ORDER BY e.date;
     """, (user_id,))
 
-    events = cursor.fetchall()
+    events = []
+    for row in cursor.fetchall():
+        event_date_str = row['date'].strftime('%Y-%m-%d')
+        events.append({
+            "user_id": row['user_id'],
+            "location": row['location'],
+            "title": row['title'],
+            "type": row['type'],
+            "date": event_date_str
+        })
     cursor.close()
 
     if not events:
@@ -40,13 +53,15 @@ def insert_event(mysql, data):
 
     location = data.get("location")
     date_str = data.get("date")
+    title = data.get("title")
+    event_type = data.get("type")
 
     if not location or not date_str:
         return jsonify({"error": "location and date are required"}), 400
 
     
     try:
-        event_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+        event_date = datetime.strptime(date_str, "%Y-%m-%d")
     except ValueError:
         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
 
@@ -58,25 +73,30 @@ def insert_event(mysql, data):
         cursor.close()
         return jsonify({"error":"User not found"}), 404
 
-    
-    cursor.execute("SELECT COUNT(*) AS cnt FROM Events WHERE location = %s AND date = %s", (location, event_date))
-    if cursor.fetchone()["cnt"] == 0:
-        cursor.close()
-        return jsonify({"error":"Event not found"}), 404
+    cursor.execute(
+        "SELECT event_id FROM Events WHERE location = %s AND date = %s",
+        (location, event_date)
+    )
+    existing_event = cursor.fetchone()
 
-    
-    try:
+    if existing_event:
+        event_id = existing_event["event_id"]
+    else:
         cursor.execute(
-            "INSERT INTO EventUsers (user_id, location, date) VALUES (%s, %s, %s)",
-            (user_id, location, event_date)
+            "INSERT INTO Events (location, date, title, type) VALUES (%s, %s, %s, %s)",
+            (location, event_date, title, event_type)
         )
         mysql.connection.commit()
-        cursor.close()
-        return jsonify({"message":"Event added successfully"}), 201
-    except Exception as e:
-        mysql.connection.rollback()
-        cursor.close()
-        return jsonify({"error": str(e)}), 500
+        event_id = cursor.lastrowid
+
+    cursor.execute(
+        "INSERT INTO EventUsers (user_id, location, date) VALUES (%s, %s, %s)", 
+        (user_id, location, event_date)
+    )
+    mysql.connection.commit()
+    cursor.close()
+    
+    return jsonify({"message":"Event added successfully", "event_id":event_id}), 200
 
 
 def remove_event(mysql, data):
@@ -112,6 +132,12 @@ def remove_event(mysql, data):
             DELETE FROM EventUsers
             WHERE user_id = %s AND location = %s AND date = %s
         """, (user_id, location, event_date))
+
+        mysql.connection.commit()
+        cursor.execute("""
+            DELETE FROM Events
+            WHERE location = %s AND date = %s AND title = %s
+        """, (location, event_date, title))
 
         mysql.connection.commit()
         cursor.close()
