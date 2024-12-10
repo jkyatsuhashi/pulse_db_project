@@ -93,7 +93,7 @@ def post_sports_data():
 
 #TODO Figure out how to get user_id
 @app.route('/api/calendar', methods=["POST"])
-def post_calendar_date():
+def post_calendar_data():
     data = request.json
     try:
         method = data.get("method")
@@ -101,13 +101,15 @@ def post_calendar_date():
         error = {"status":"error", "message":"no method included"}
         return jsonify(error)
     if method == "get":
-        response = calendar.get_calendar(mysql, user_id=None) 
+        response = calendar.get_calendar(mysql, data) 
     elif method == "remove":
-        response = calendar.remove_event(mysql, user_id, data)
+        response = calendar.remove_event(mysql, data)
     elif method == "update":
-        response = calendar.update_event(mysql, user_id, event_id, data)
+        response = calendar.update_event(mysql, data)
     elif method == "insert":
-        response = calendar.insert_event(mysql, userid, data)
+        response = calendar.insert_event(mysql, data)
+
+    return response
 
 
 if __name__ == '__main__':

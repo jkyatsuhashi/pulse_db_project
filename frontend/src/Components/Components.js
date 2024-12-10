@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -12,6 +11,7 @@ import RestaurantsContainer from "./Restaurants/RestaurantsContainer";
 import SportsContainer from "./Sports/SportsContainer";
 import Dashboard from "./Dashboard/Dashboard"; // Assuming you have a Dashboard component
 import AuthContainer from "./Auth/AuthContainer"
+import CalendarContainer from "./Calendar/CalendarContainer";
 
 // ProtectedRoute component
 const ProtectedRoute = ({ isLoggedIn, children }) => {
@@ -28,7 +28,7 @@ const Components = ({ user, setUser, login, register, logout, host, port }) => {
   };
 
   return (
-    <Router>
+    <>
       <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
           <Navbar.Brand href="/">My Website</Navbar.Brand>
@@ -39,6 +39,7 @@ const Components = ({ user, setUser, login, register, logout, host, port }) => {
               <Nav.Link href="/restaurants" className="ms-3">Restaurants</Nav.Link>
               <Nav.Link href="/movies" className="ms-3">Movies</Nav.Link>
               <Nav.Link href="/sports" className="ms-3">Sports</Nav.Link>
+              <Nav.Link href="/calendar" className="ms-3">Calendar</Nav.Link>
             </Nav>
             {isLoggedIn && (
               <Button variant="outline-light" onClick={handleLogout}>
@@ -86,11 +87,19 @@ const Components = ({ user, setUser, login, register, logout, host, port }) => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute isLoggedIn={isLoggedIn}>
+              <CalendarContainer host={host} port={port} user={user}/>
+            </ProtectedRoute>
+           }
+         />
 
         {/* Redirect to dashboard or login */}
         <Route path="*" element={<Navigate to={isLoggedIn ? "/" : "/login"} replace />} />
       </Routes>
-    </Router>
+    </>
   );
 };
 

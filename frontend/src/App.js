@@ -1,5 +1,6 @@
 import Components from './Components/Components';
 import React, {useState} from "react";
+import CalendarParent from './Components/Calendar/CalendarParent';
 function App() {
   const loadUserFromLocalStorage = () => {
     const user = localStorage.getItem('user');
@@ -74,6 +75,7 @@ function App() {
 
 
   return (
+    <>
   <Components 
     login={handleLogin} 
     register={handleRegister}
@@ -82,6 +84,7 @@ function App() {
     setUser={setUser}
     host={host}
     port={port} />
+    </>
   );
 }
 export default App;
