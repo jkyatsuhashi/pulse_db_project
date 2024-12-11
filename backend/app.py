@@ -146,6 +146,8 @@ def post_event_data():
         response = event.get_event_users(mysql, data)
     elif method == "get_details":
         response = event.get_event_users_details(mysql, data)
+    elif method == "set_attendance":
+        response = event.set_attendance(mysql, data)
     else:
         return jsonify({"status": "error", "message": f"Unknown method: {method}"}), 400
 
