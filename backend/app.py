@@ -7,6 +7,7 @@ from Restaurants import restaurants
 from Movies import movies
 from Sports import sports
 from Calendar import calendar
+from Event import event
 from Auth import auth
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -133,57 +134,22 @@ def post_calendar_data():
     return response
 
 @app.route('/api/event', methods=["POST"])
-def get_event_users():
+def post_event_data():
     data = request.json
-    event_id = data.get("eventId")
-    user_id = data.get("userId")  
-
-    if not event_id:
-        return jsonify({"status": "error", "message": "eventId is required"}), 400
-
-    cursor = mysql.connection.cursor()
 
     try:
-        if user_id:
-            cursor.execute("""
-                SELECT is_attending FROM EventUsers WHERE user_id = %s AND event_id = %s
-            """, (user_id, event_id))
-            attendance = cursor.fetchone()
+        method = data.get("method")
+    except:
+        return jsonify({"status": "error", "message": "No method included"}), 400
 
-            if attendance:
-                new_status = not attendance['is_attending']
-                cursor.execute("""
-                    UPDATE EventUsers SET is_attending = %s
-                    WHERE user_id = %s AND event_id = %s
-                """, (new_status, user_id, event_id))
-                mysql.connection.commit()
-                toggle_message = "You are now attending this event" if new_status else "You are no longer attending this event"
-            else:
-                return jsonify({"status": "error", "message": "User not found for this event"}), 404
-        else:
-            toggle_message = None
+    if method == "get":
+        response = event.get_event_users(mysql, data)
+    elif method == "get_details":
+        response = event.get_event_users_details(mysql, data)
+    else:
+        return jsonify({"status": "error", "message": f"Unknown method: {method}"}), 400
 
-        cursor.execute("""
-            SELECT user_id FROM EventUsers
-            WHERE event_id = %s AND is_attending = TRUE
-        """, (event_id,))
-        attending_users = [row['user_id'] for row in cursor.fetchall()]
-
-        response = {
-            "status": "success",
-            "attending_users": attending_users
-        }
-        if toggle_message:
-            response["message"] = toggle_message
-
-        return jsonify(response), 200
-
-    except Exception as e:
-        print(f"Error in /api/event: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-    finally:
-        cursor.close()
+    return response
 
 
 
