@@ -20,6 +20,7 @@ export default function EventDetail() {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        method: "get",
                         eventId: event.event_id
                     })
                 });

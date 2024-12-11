@@ -141,27 +141,13 @@ def post_event_data():
     try:
         method = data.get("method")
     except:
-        return jsonify({"status": "error", "message": "No method included"}), 400
-    cursor = mysql.connection.cursor(DictCursor)
-
-    try:
-        cursor.execute("""
-            SELECT EventUsers.user_id, is_attending, username FROM EventUsers, Users
-            WHERE EventUsers.event_id = %s AND EventUsers.user_id = Users.user_id
-        """, (event_id,))
-        users = cursor.fetchall()
-        response = {
-            "status": "success",
-            "message": users
-        }
-        return jsonify(response), 200
-
-    except Exception as e:
-        print(f"Error in /api/event: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-    finally:
-        cursor.close()
+        error = {"status": "error", "message" : "no method"}
+        return jsonify(error)
+    if method == "get":
+        response = event.get_event_users(mysql, data)
+    elif method == "update":
+        response = event.set_attendance(mysql, data)
+    return response
 
 
 
