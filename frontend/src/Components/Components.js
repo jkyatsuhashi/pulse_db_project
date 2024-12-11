@@ -12,6 +12,7 @@ import SportsContainer from "./Sports/SportsContainer";
 import Dashboard from "./Dashboard/Dashboard"; // Assuming you have a Dashboard component
 import AuthContainer from "./Auth/AuthContainer"
 import CalendarContainer from "./Calendar/CalendarContainer";
+import EventDetail from "./Calendar/EventDetail";
 
 // ProtectedRoute component
 const ProtectedRoute = ({ isLoggedIn, children }) => {
@@ -20,7 +21,6 @@ const ProtectedRoute = ({ isLoggedIn, children }) => {
 
 const Components = ({ user, setUser, login, register, logout, host, port }) => {
   const isLoggedIn = !!user; // Check if a user is logged in (non-null)
-  console.log(user)
   // Logout handler
   const handleLogout = () => {
     logout(); // Call the passed-in logout function
@@ -95,7 +95,14 @@ const Components = ({ user, setUser, login, register, logout, host, port }) => {
             </ProtectedRoute>
            }
          />
-
+          <Route
+                path="/event/:eventId"    
+                element={
+                    <ProtectedRoute isLoggedIn={isLoggedIn}>
+                        <EventDetail />
+                    </ProtectedRoute>
+                }
+            />
         {/* Redirect to dashboard or login */}
         <Route path="*" element={<Navigate to={isLoggedIn ? "/" : "/login"} replace />} />
       </Routes>

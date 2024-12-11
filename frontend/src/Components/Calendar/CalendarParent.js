@@ -3,6 +3,7 @@ import { Card, Spin, Button } from 'antd';
 import { useLocation } from 'react-router-dom'
 import dayjs from 'dayjs';
 import AddEventModal from './AddEventModal';
+import CalendarChild from './CalendarChild'
 
 const CalendarParent = ({ userId, host, port }) => {
     const location = useLocation();
@@ -137,7 +138,6 @@ const CalendarParent = ({ userId, host, port }) => {
         return <div>Error: {error}</div>;
     }
 
-    const CalendarChild = require('./CalendarChild').default;
 
     return (
         <div>
@@ -151,7 +151,7 @@ const CalendarParent = ({ userId, host, port }) => {
                 onAddEvent={handleAddEvent}
             />
 
-            <CalendarChild events={events} onRemoveEvent={handleRemoveEvent}/>
+            <CalendarChild events={events} onRemoveEvent={handleRemoveEvent} host={host} port={port}/>
         </div>
     );
 };

@@ -10,8 +10,9 @@ from Calendar import calendar
 from Event import event
 from Auth import auth
 from datetime import datetime
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
+from MySQLdb.cursors import DictCursor #type: ignore
+from apscheduler.schedulers.background import BackgroundScheduler #type: ignore
+from apscheduler.triggers.cron import CronTrigger #type: ignore
 from utils.generate_random.generate_random_event import generate_random_event_in_region
 app = Flask(__name__)
 load_dotenv()
@@ -39,14 +40,15 @@ def schedule_event_generation():
             print(f"[{datetime.now()}] Error generating event: {e}")
 
 ## scheduler.add_job(schedule_event_generation, CronTrigger(day_of_week='sun', hour=23, minute=59))
-scheduler.add_job(schedule_event_generation, CronTrigger(second='*/10'))
+
+#Temporary one for now
+scheduler.add_job(schedule_event_generation, CronTrigger(minute='*/30'))
 
 scheduler.start()
 
 @app.route('/api/login', methods=["POST"])
 def get_user():
     data = request.json
-    print(data)
     method = data.get("method")
     if method == "login":
         response = auth.login(mysql, data)
@@ -136,22 +138,30 @@ def post_calendar_data():
 @app.route('/api/event', methods=["POST"])
 def post_event_data():
     data = request.json
-
     try:
         method = data.get("method")
     except:
         return jsonify({"status": "error", "message": "No method included"}), 400
+    cursor = mysql.connection.cursor(DictCursor)
 
-    if method == "get":
-        response = event.get_event_users(mysql, data)
-    elif method == "get_details":
-        response = event.get_event_users_details(mysql, data)
-    elif method == "set_attendance":
-        response = event.set_attendance(mysql, data)
-    else:
-        return jsonify({"status": "error", "message": f"Unknown method: {method}"}), 400
+    try:
+        cursor.execute("""
+            SELECT EventUsers.user_id, is_attending, username FROM EventUsers, Users
+            WHERE EventUsers.event_id = %s AND EventUsers.user_id = Users.user_id
+        """, (event_id,))
+        users = cursor.fetchall()
+        response = {
+            "status": "success",
+            "message": users
+        }
+        return jsonify(response), 200
 
-    return response
+    except Exception as e:
+        print(f"Error in /api/event: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+    finally:
+        cursor.close()
 
 
 

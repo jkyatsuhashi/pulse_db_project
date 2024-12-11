@@ -13,7 +13,8 @@ const CalendarChild = ({ events = [], onRemoveEvent }) => {
     const navigate = useNavigate();
 
     const handleEventClick = (event) => {
-        navigate(`/event/${event.event_user_id}`, { state: { event } });
+        console.log(event)
+        navigate(`/event/${event.event_id}`, { state: { event } });
     };
 
     const handleDateSelect = (date) => {
