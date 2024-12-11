@@ -12,7 +12,7 @@ const DateCellRender = ({ value, events, handleEventClick, onRemoveEvent }) => {
                 <div
                     key={index}
                     style={{ background: '#e6f7ff', marginBottom: '2px', padding: '2px', cursor: 'pointer' }}
-                    //onClick={() => handleEventClick(evt)} 
+                    onClick={() => handleEventClick(evt)} 
                 >
                     {evt.title || 'Untitled Event'}
                     <Button

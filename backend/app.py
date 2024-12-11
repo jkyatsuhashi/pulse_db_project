@@ -8,11 +8,15 @@ from Movies import movies
 from Sports import sports
 from Calendar import calendar
 from Auth import auth
+from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from utils.generate_random.generate_random_event import generate_random_event_in_region
 app = Flask(__name__)
 load_dotenv()
 
 host = "db8.cse.nd.edu"
-port = 5075
+port = 5076
 
 # Configure database connection
 app.config['MYSQL_HOST'] = 'localhost'
@@ -21,6 +25,21 @@ app.config['MYSQL_PASSWORD'] = os.getenv('SQL_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('SQL_DB')
 mysql = MySQL(app)
 CORS(app)
+
+scheduler = BackgroundScheduler()
+
+def schedule_event_generation():
+    with app.app_context():
+        print(f"[{datetime.now()}] Triggering random event generation...")
+        try:
+            response, status = generate_random_event_in_region(mysql)
+            print(f"[{datetime.now()}] Generated event response: {response.get_json()}")
+        except Exception as e:
+            print(f"[{datetime.now()}] Error generating event: {e}")
+
+scheduler.add_job(schedule_event_generation, CronTrigger(day_of_week='sun', hour=23, minute=59))
+
+scheduler.start()
 
 @app.route('/api/login', methods=["POST"])
 def get_user():
@@ -69,7 +88,8 @@ def post_movie_data():
     else:
         response = movies.update_movie(mysql, data)
     # Process the data and create a response
-    return response
+    return response 
+
 
 @app.route('/api/sports', methods=['POST'])
 def post_sports_data():
@@ -91,7 +111,7 @@ def post_sports_data():
     return response
 
 
-#TODO Figure out how to get user_id
+
 @app.route('/api/calendar', methods=["POST"])
 def post_calendar_data():
     data = request.json

@@ -1,11 +1,16 @@
 from flask import jsonify
 from MySQLdb.cursors import DictCursor
-from datetime import datetime
+from datetime import datetime, timedelta
+import random
 
 def get_calendar(mysql, data):
     user_id = data.get("user_id")
     if not user_id:
         return jsonify({"error": "user_id is required"}), 400
+
+    
+    adjusted_user_id = user_id - 1  
+    print(f"Received user_id: {user_id}, Adjusted user_id: {adjusted_user_id}")
 
     location = data.get("location")
     date_str = data.get("date")
@@ -14,19 +19,20 @@ def get_calendar(mysql, data):
 
     cursor = mysql.connection.cursor(DictCursor)
 
-    cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (user_id,))
+    
+    cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (adjusted_user_id,))
     if cursor.fetchone()["cnt"] == 0:
         cursor.close()
-        return jsonify({"error":"User not found"}), 404
+        return jsonify({"error": "User not found"}), 404
 
-   
+    
     cursor.execute("""
         SELECT eu.id AS event_user_id, eu.user_id, e.location, e.date, e.title, e.type
         FROM EventUsers eu
         JOIN Events e ON eu.location = e.location AND eu.date = e.date
         WHERE eu.user_id = %s
         ORDER BY e.date;
-    """, (user_id,))
+    """, (adjusted_user_id,))
 
     events = []
     for row in cursor.fetchall():
@@ -44,6 +50,7 @@ def get_calendar(mysql, data):
         return jsonify({"message": "No events found for this user"}), 200
 
     return jsonify({"events": events}), 200
+
 
 
 def insert_event(mysql, data):
@@ -129,18 +136,18 @@ def remove_event(mysql, data):
     
     try:
         cursor.execute("""
-            DELETE FROM EventUsers
+            DELETE FROM EventUsers 
             WHERE user_id = %s AND location = %s AND date = %s
-        """, (user_id, location, event_date))
+            """, (user_id, location, event_date))
 
-        mysql.connection.commit()
         cursor.execute("""
-            DELETE FROM Events
-            WHERE location = %s AND date = %s AND title = %s
-        """, (location, event_date, title))
+            DELETE FROM Events 
+            WHERE location = %s AND date = %s
+            """, (location, event_date))
 
         mysql.connection.commit()
         cursor.close()
+
         return jsonify({"message": f"{title if title else 'Event'} deleted successfully"}), 200
     except Exception as e:
         mysql.connection.rollback()

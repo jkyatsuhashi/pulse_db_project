@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Card, Spin, Button } from 'antd';
+import { useLocation } from 'react-router-dom'
 import dayjs from 'dayjs';
 import AddEventModal from './AddEventModal';
 
 const CalendarParent = ({ userId, host, port }) => {
+    const location = useLocation();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,7 +14,7 @@ const CalendarParent = ({ userId, host, port }) => {
     const showAddEventModal = () => setIsModalVisible(true);
     const hideAddEventModal = () => setIsModalVisible(false);
     
-    const loadEventData = async () => {
+    const loadEventData = useCallback(async () => {
         if (!userId) {
             setEvents([]);
             setLoading(false);
@@ -34,7 +36,6 @@ const CalendarParent = ({ userId, host, port }) => {
             }
 
             const data = await response.json();
-            
             console.log(data)
 
             if (data.events) {
@@ -54,11 +55,11 @@ const CalendarParent = ({ userId, host, port }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userId, host, port]);
 
     useEffect(() => {
         loadEventData();
-    }, [userId, host, port]);
+    }, [userId, host, port, location, loadEventData]);
 
     const handleAddEvent = async (newEvent) => {
         try {
