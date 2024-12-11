@@ -8,7 +8,6 @@ def get_calendar(mysql, data):
     if not user_id:
         return jsonify({"error": "user_id is required"}), 400
 
-    
     adjusted_user_id = user_id - 1  
     print(f"Received user_id: {user_id}, Adjusted user_id: {adjusted_user_id}")
 
@@ -19,17 +18,23 @@ def get_calendar(mysql, data):
 
     cursor = mysql.connection.cursor(DictCursor)
 
-    
     cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (adjusted_user_id,))
     if cursor.fetchone()["cnt"] == 0:
         cursor.close()
         return jsonify({"error": "User not found"}), 404
 
-    
     cursor.execute("""
-        SELECT eu.id AS event_user_id, eu.user_id, e.location, e.date, e.title, e.type
+        SELECT 
+            eu.id AS event_user_id, 
+            eu.user_id, 
+            eu.is_attending, 
+            e.event_id, 
+            e.location, 
+            e.date, 
+            e.title, 
+            e.type
         FROM EventUsers eu
-        JOIN Events e ON eu.location = e.location AND eu.date = e.date
+        JOIN Events e ON eu.event_id = e.event_id
         WHERE eu.user_id = %s
         ORDER BY e.date;
     """, (adjusted_user_id,))
@@ -42,7 +47,9 @@ def get_calendar(mysql, data):
             "location": row['location'],
             "title": row['title'],
             "type": row['type'],
-            "date": event_date_str
+            "date": event_date_str,
+            "event_id": row["event_id"],
+            "is_attending": bool(row["is_attending"])
         })
     cursor.close()
 
