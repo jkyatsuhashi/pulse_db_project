@@ -7,6 +7,7 @@ from Restaurants import restaurants
 from Movies import movies
 from Sports import sports
 from Calendar import calendar
+from Event import event
 from Auth import auth
 from datetime import datetime
 from MySQLdb.cursors import DictCursor #type: ignore
@@ -135,13 +136,12 @@ def post_calendar_data():
     return response
 
 @app.route('/api/event', methods=["POST"])
-def get_event_users():
+def post_event_data():
     data = request.json
-    event_id = data.get("eventId")
-
-    if not event_id:
-        return jsonify({"status": "error", "message": "eventId is required"}), 400
-
+    try:
+        method = data.get("method")
+    except:
+        return jsonify({"status": "error", "message": "No method included"}), 400
     cursor = mysql.connection.cursor(DictCursor)
 
     try:
