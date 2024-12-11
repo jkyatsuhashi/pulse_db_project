@@ -3,11 +3,11 @@ import React, {useState} from "react";
 function App() {
   const loadUserFromLocalStorage = () => {
     const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null; // Parse the stored JSON, or return null if no user is found
+    return user ? JSON.parse(user) : null; 
   };
 
-  const [user, setUser] = useState(loadUserFromLocalStorage); // Initialize state with loaded user
-  const port = 5076
+  const [user, setUser] = useState(loadUserFromLocalStorage); 
+  const port = 5077
   const host = "db8.cse.nd.edu"
   const handleLogin = async (dataToSend) => {
     try {
@@ -19,16 +19,16 @@ function App() {
   
       const result = await response.json();
   
-      console.log("Login result:", result); // Log the result
+      console.log("Login result:", result); 
   
       if (result.status === "success" && result.message) {
         
         const { username, address, user_id } = result.message;
 
         const loggedInUser = { username, address, userId: user_id };
-        setUser(loggedInUser); // Update state with logged in user
-        localStorage.setItem('user', JSON.stringify(loggedInUser)); // Save user to localStorage
-        return { status: "success" }; // Indicate success
+        setUser(loggedInUser); 
+        localStorage.setItem('user', JSON.stringify(loggedInUser)); 
+        return { status: "success" }; 
       } else {
         return { status: "error", message: result.message || "Invalid login" };
       }
@@ -48,15 +48,15 @@ function App() {
   
       const result = await response.json();
   
-      console.log("Register result:", result); // Log the result
+      console.log("Register result:", result); 
   
       if (result.status === "success" && result.message) {
         const username = dataToSend["username"]
         const address = dataToSend["address"]
         const loggedInUser = { username, address };
-        setUser(loggedInUser); // Update state with logged in user
-        localStorage.setItem('user', JSON.stringify(loggedInUser)); // Save user to localStorage
-        return { status: "success" }; // Indicate success
+        setUser(loggedInUser); 
+        localStorage.setItem('user', JSON.stringify(loggedInUser)); 
+        return { status: "success" }; 
       } else {
         return { status: "error", message: result.message || "Registration failed" };
       }
@@ -68,7 +68,7 @@ function App() {
   
   const handleLogout = () =>{
     setUser(null)
-    localStorage.removeItem('user'); // Remove user from localStorage
+    localStorage.removeItem('user'); 
 
   }
 

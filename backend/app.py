@@ -16,7 +16,7 @@ app = Flask(__name__)
 load_dotenv()
 
 host = "db8.cse.nd.edu"
-port = 5076
+port = 5077
 
 # Configure database connection
 app.config['MYSQL_HOST'] = 'localhost'
@@ -37,7 +37,8 @@ def schedule_event_generation():
         except Exception as e:
             print(f"[{datetime.now()}] Error generating event: {e}")
 
-scheduler.add_job(schedule_event_generation, CronTrigger(day_of_week='sun', hour=23, minute=59))
+## scheduler.add_job(schedule_event_generation, CronTrigger(day_of_week='sun', hour=23, minute=59))
+scheduler.add_job(schedule_event_generation, CronTrigger(second='*/10'))
 
 scheduler.start()
 
