@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Form, Alert, Container, Row, Col } from 'react-bootstrap';
+import { Button, Form, Alert, Container, Row, Col } from "react-bootstrap";
 
-const InsertDelete = ({ host, port, action, setResponse }) => {
+const InsertDelete = ({ host, port, setResponse }) => {
+    const [action, setAction] = useState("insert");
     const [name, setName] = useState("");
     const [type, setType] = useState("cafe");
     const [position, setPosition] = useState("");
@@ -47,27 +48,91 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
             });
 
             if (!res.ok) {
-                setErrorMessage(action === 'insert' ? "Restaurant exists" : "Restaurant Not Found");
-                setSuccessMessage(""); 
-                return; 
+                setErrorMessage(action === "insert" ? "Restaurant exists" : "Restaurant Not Found");
+                setSuccessMessage("");
+                return;
             }
 
             const result = await res.json();
             setErrorMessage("");
-            setSuccessMessage("");
             setResponse(result);
             setSuccessMessage(action === "insert" ? "Restaurant added successfully." : "Restaurant removed successfully.");
         } catch (error) {
             setErrorMessage("An error occurred while processing your request.");
-            setSuccessMessage(""); 
+            setSuccessMessage("");
         }
     };
 
     return (
-        <Container className="mt-4">
-            <Row>
-                <Col md={12}>
+        <Container
+            fluid
+            className="d-flex justify-content-center align-items-center min-vh-100"
+        >
+            <style>
+                {`
+                    .form-container {
+                        background: rgba(255, 255, 255, 0.7);
+                        backdrop-filter: blur(10px);
+                        border-radius: 15px;
+                        padding: 2rem;
+                        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+                        width: 80%;
+                        max-width: 900px;
+                    }
+
+                    .form-container h2 {
+                        text-align: center;
+                        margin-bottom: 1.5rem;
+                    }
+
+                    .form-container input, .form-container select {
+                        height: 45px;
+                        border-radius: 5px;
+                        border: 1px solid #ced4da;
+                        padding: 0.5rem 1rem;
+                        margin-bottom: 1rem;
+                    }
+
+                    .form-container input:focus, .form-container select:focus {
+                        border-color: #007bff;
+                        outline: none;
+                        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+                    }
+
+                    .form-container button {
+                        background-color: #007bff;
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        height: 45px;
+                        transition: background-color 0.3s ease;
+                    }
+
+                    .form-container button:hover {
+                        background-color: #0056b3;
+                    }
+
+                    .alert-container {
+                        margin-top: 1rem;
+                    }
+                `}
+            </style>
+            <Row className="form-container">
+                <Col>
+                    <h2>Restaurant Management</h2>
                     <Form>
+                        <Form.Group controlId="formAction">
+                            <Form.Label>Action</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={action}
+                                onChange={(e) => setAction(e.target.value)}
+                            >
+                                <option value="insert">Insert</option>
+                                <option value="remove">Remove</option>
+                            </Form.Control>
+                        </Form.Group>
+
                         <Form.Group controlId="formName">
                             <Form.Label>Name</Form.Label>
                             <Form.Control
@@ -75,6 +140,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Enter restaurant name"
+                                required
                             />
                         </Form.Group>
 
@@ -89,10 +155,9 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                     >
                                         <option value="cafe">Cafe</option>
                                         <option value="restaurant">Restaurant</option>
-                                        {/* Add other options here */}
                                     </Form.Control>
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formPosition">
                                     <Form.Label>Position</Form.Label>
                                     <Form.Control
@@ -102,7 +167,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter position"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formScore">
                                     <Form.Label>Score</Form.Label>
                                     <Form.Control
@@ -113,7 +178,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter score"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formRatings">
                                     <Form.Label>Ratings</Form.Label>
                                     <Form.Control
@@ -123,7 +188,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter number of ratings"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formCategory">
                                     <Form.Label>Category</Form.Label>
                                     <Form.Control
@@ -133,7 +198,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter category"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formPriceRange">
                                     <Form.Label>Price Range</Form.Label>
                                     <Form.Control
@@ -143,7 +208,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter price range"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formFullAddress">
                                     <Form.Label>Full Address</Form.Label>
                                     <Form.Control
@@ -153,7 +218,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter full address"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formZipCode">
                                     <Form.Label>Zip Code</Form.Label>
                                     <Form.Control
@@ -163,7 +228,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter zip code"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formLat">
                                     <Form.Label>Latitude</Form.Label>
                                     <Form.Control
@@ -174,7 +239,7 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                                         placeholder="Enter latitude"
                                     />
                                 </Form.Group>
-                                
+
                                 <Form.Group controlId="formLng">
                                     <Form.Label>Longitude</Form.Label>
                                     <Form.Control
@@ -188,33 +253,17 @@ const InsertDelete = ({ host, port, action, setResponse }) => {
                             </>
                         )}
 
-                        <Button
-                            onClick={handleSubmit}
-                            variant="primary"
-                            size="lg"
-                            className="w-100"
-                        >
+                        <Button variant="primary" className="w-100" onClick={handleSubmit}>
                             {action === "insert" ? "Add Restaurant" : "Remove Restaurant"}
                         </Button>
                     </Form>
+
+                    <div className="alert-container">
+                        {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+                        {successMessage && <Alert variant="success">{successMessage}</Alert>}
+                    </div>
                 </Col>
             </Row>
-
-            {errorMessage && (
-                <Row className="mt-3">
-                    <Col md={12}>
-                        <Alert variant="danger">{errorMessage}</Alert>
-                    </Col>
-                </Row>
-            )}
-
-            {successMessage && (
-                <Row className="mt-3">
-                    <Col md={12}>
-                        <Alert variant="success">{successMessage}</Alert>
-                    </Col>
-                </Row>
-            )}
         </Container>
     );
 };
