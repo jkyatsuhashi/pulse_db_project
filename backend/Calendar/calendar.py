@@ -1,5 +1,5 @@
 from flask import jsonify
-from MySQLdb.cursors import DictCursor
+from MySQLdb.cursors import DictCursor #type: ignore
 from datetime import datetime, timedelta
 import random
 
@@ -9,7 +9,6 @@ def get_calendar(mysql, data):
         return jsonify({"error": "user_id is required"}), 400
 
     adjusted_user_id = user_id - 1  
-    print(f"Received user_id: {user_id}, Adjusted user_id: {adjusted_user_id}")
 
     location = data.get("location")
     date_str = data.get("date")
