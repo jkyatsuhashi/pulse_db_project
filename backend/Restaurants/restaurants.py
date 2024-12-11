@@ -8,7 +8,7 @@ def get_restaurants(mysql):
         curr.execute(
             """
             SELECT name, position, score, ratings, category, price_range, full_address, zip_code, lat, lng 
-            FROM restaurants 
+            FROM Restaurants 
             WHERE price_range = '$'
             ORDER BY score DESC 
             LIMIT 20;
@@ -42,7 +42,7 @@ def insert_restaurant(mysql, restaurant):
     try:
         curr.execute(
             """
-            INSERT INTO restaurants (position, name, score, ratings, category, price_range, full_address, zip_code, lat, lng)
+            INSERT INTO Restaurants (position, name, score, ratings, category, price_range, full_address, zip_code, lat, lng)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (position, name, score, ratings, category, price_range, full_address, zip_code, lat, lng)
@@ -66,7 +66,7 @@ def remove_restaurant(mysql, restaurant):
     curr = mysql.connection.cursor()
     try:
 
-        curr.execute("SELECT * FROM restaurants WHERE name = %s", (name,))
+        curr.execute("SELECT * FROM Restaurants WHERE name = %s", (name,))
         restaurant_exists = curr.fetchone()
         
         if not restaurant_exists:
@@ -98,7 +98,7 @@ def update_restaurant(mysql, restaurant):
 
     set_clause = ", ".join([f"{key} = %s" for key in rest_data.keys()])
     values = tuple(rest_data.values()) + (name,)
-    query = f"UPDATE restaurants SET {set_clause} WHERE name = %s"
+    query = f"UPDATE Restaurants SET {set_clause} WHERE name = %s"
 
     curr = mysql.connection.cursor()
     try:
