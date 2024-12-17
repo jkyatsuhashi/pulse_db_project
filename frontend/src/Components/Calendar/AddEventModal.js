@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form, Input, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 
-const AddEventModal = ({ visible, onCancel, onAddEvent }) => {
+const AddEventModal = ({ open, onCancel, onAddEvent }) => {
   const [form] = Form.useForm();
   
   const handleSubmit = () => {
@@ -16,7 +16,7 @@ const AddEventModal = ({ visible, onCancel, onAddEvent }) => {
 
   return (
     <Modal
-      visible={visible}
+      open={open}
       title="Add New Event"
       onCancel={onCancel}
       onOk={handleSubmit}

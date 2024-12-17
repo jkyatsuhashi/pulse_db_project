@@ -41,3 +41,21 @@
 129.74.120.164 - - [16/Dec/2024 20:23:37] "POST /api/calendar HTTP/1.1" 200 -
 [2024-12-16 20:30:00.003553] Triggering random event generation...
 [2024-12-16 20:30:00.098381] Generated event response: {'event': {'assigned_users': [130, 190, 24], 'date': '2024-12-24', 'location': '3473 South 27th Street, Milwaukee, WI, 53215'}, 'message': 'Random Restaurant event created in Indiana or Michigan with local users assigned.'}
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://db8.cse.nd.edu:5077/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 144-879-724
+129.74.120.164 - - [16/Dec/2024 23:51:50] "[36mGET /login HTTP/1.1[0m" 304 -
+129.74.120.164 - - [16/Dec/2024 23:51:50] "[36mGET /static/js/main.fd4e35bb.js HTTP/1.1[0m" 304 -
+129.74.120.164 - - [16/Dec/2024 23:51:50] "[36mGET /static/css/main.79d19d76.css HTTP/1.1[0m" 304 -
+129.74.120.164 - - [16/Dec/2024 23:52:54] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+129.74.120.164 - - [16/Dec/2024 23:52:54] "GET /favicon.ico HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 23:52:54] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+129.74.120.164 - - [16/Dec/2024 23:52:54] "GET /login HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 23:52:54] "[33mGET /logo192.png HTTP/1.1[0m" 404 -
+129.74.120.164 - - [16/Dec/2024 23:52:54] "GET /favicon.ico HTTP/1.1" 200 -

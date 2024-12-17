@@ -14,7 +14,8 @@ from MySQLdb.cursors import DictCursor #type: ignore
 from apscheduler.schedulers.background import BackgroundScheduler #type: ignore
 from apscheduler.triggers.cron import CronTrigger #type: ignore
 from utils.generate_random.generate_random_event import generate_random_event_in_region
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder="../frontend/build", static_url_path="/")
 load_dotenv()
 
 host = "db8.cse.nd.edu"
@@ -45,6 +46,31 @@ def schedule_event_generation():
 scheduler.add_job(schedule_event_generation, CronTrigger(minute='*/30'))
 
 scheduler.start()
+@app.route("/")
+def dashboard():
+    return app.send_static_file('index.html')
+
+@app.route("/restaurants")
+def restaurants_page():
+    return app.send_static_file('index.html')
+
+@app.route("/login")
+def login_page():
+    return app.send_static_file('index.html')
+
+@app.route("/register")
+def register_page():
+    return app.send_static_file('index.html')
+
+@app.route("/movies")
+def movies_page():
+    return app.send_static_file('index.html')
+@app.route("/sports")
+def sports_page():
+    return app.send_static_file('index.html')
+@app.route("/calendar")
+def calendar_page():
+    return app.send_static_file('index.html')
 
 @app.route('/api/login', methods=["POST"])
 def get_user():
