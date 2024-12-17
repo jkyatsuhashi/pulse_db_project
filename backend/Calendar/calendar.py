@@ -59,56 +59,73 @@ def get_calendar(mysql, data):
 
 
 def insert_event(mysql, data):
-    user_id = data.get("user_id")
-    if not user_id:
-        return jsonify({"error": "user_id is required"}), 400
-
-    location = data.get("location")
-    date_str = data.get("date")
-    title = data.get("title")
-    event_type = data.get("type")
-
-    if not location or not date_str:
-        return jsonify({"error": "location and date are required"}), 400
-
-    
-    try:
-        event_date = datetime.strptime(date_str, "%Y-%m-%d")
-    except ValueError:
-        return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
-
-    cursor = mysql.connection.cursor(DictCursor)
-
-    
-    cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (user_id,))
-    if cursor.fetchone()["cnt"] == 0:
-        cursor.close()
-        return jsonify({"error":"User not found"}), 404
-
-    cursor.execute(
-        "SELECT event_id FROM Events WHERE location = %s AND date = %s",
-        (location, event_date)
-    )
-    existing_event = cursor.fetchone()
-
-    if existing_event:
-        event_id = existing_event["event_id"]
-    else:
-        cursor.execute(
-            "INSERT INTO Events (location, date, title, type) VALUES (%s, %s, %s, %s)",
-            (location, event_date, title, event_type)
-        )
-        mysql.connection.commit()
-        event_id = cursor.lastrowid
-
-    cursor.execute(
-        "INSERT INTO EventUsers (user_id, location, date) VALUES (%s, %s, %s)", 
-        (user_id, location, event_date)
-    )
-    mysql.connection.commit()
-    cursor.close()
-    
-    return jsonify({"message":"Event added successfully", "event_id":event_id}), 200
+   user_id = data.get("user_id")
+   if not user_id:
+       return jsonify({"error": "user_id is required"}), 400
+  
+   location = data.get("location")
+   date_str = data.get("date")
+   title = data.get("title")
+   event_type = data.get("type")
+  
+   if not location or not date_str:
+       return jsonify({"error": "location and date are required"}), 400
+  
+   try:
+       event_date = datetime.strptime(date_str, "%Y-%m-%d")
+   except ValueError:
+       return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
+  
+   cursor = mysql.connection.cursor(DictCursor)
+  
+   # Check if user exists
+   cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (user_id,))
+   if cursor.fetchone()["cnt"] == 0:
+       cursor.close()
+       return jsonify({"error":"User not found"}), 404
+  
+   # Check if event exists
+   cursor.execute(
+       "SELECT event_id FROM Events WHERE location = %s AND date = %s",
+       (location, event_date)
+   )
+   existing_event = cursor.fetchone()
+  
+   if existing_event:
+       # Event exists, just add user to EventUsers
+       event_id = existing_event["event_id"]
+      
+       # Check if user is already associated with this event
+       cursor.execute(
+           "SELECT COUNT(*) AS cnt FROM EventUsers WHERE user_id = %s AND location = %s AND date = %s",
+           (user_id, location, event_date)
+       )
+       if cursor.fetchone()["cnt"] == 0:
+           # Add user to EventUsers only if not already associated
+           cursor.execute(
+               "INSERT INTO EventUsers (user_id, location, date, event_id, is_attending) VALUES (%s, %s, %s, %s, %s)",
+               (user_id, location, date_str, event_id,1 )
+           )
+           mysql.connection.commit()
+   else:
+       # Event does not exist, create new event and add user
+       cursor.execute(
+           "INSERT INTO Events (location, date, title, type) VALUES (%s, %s, %s, %s)",
+           (location, event_date, title, event_type)
+       )
+       mysql.connection.commit()
+       event_id = cursor.lastrowid
+      
+       # Add user to EventUsers for the new event
+       cursor.execute(
+               "INSERT INTO EventUsers (user_id, location, date, event_id, is_attending) VALUES (%s, %s, %s, %s, %s)",
+               (user_id, location, date_str, event_id,1 )
+           )
+       mysql.connection.commit()
+  
+   cursor.close()
+  
+   return jsonify({"message":"Event added successfully", "event_id":event_id}), 200
 
 
 def remove_event(mysql, data):

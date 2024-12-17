@@ -37,7 +37,6 @@ const CalendarParent = ({ userId, host, port }) => {
             }
     
             const data = await response.json();
-            console.log('Loaded events:', data); // Add this log to ensure correct data is fetched
     
             if (data.events) {
                 const normalizedEvents = data.events.map(evt => ({
@@ -149,7 +148,7 @@ const CalendarParent = ({ userId, host, port }) => {
                 Add Event
             </Button>
             <AddEventModal
-                visible={isModalVisible}
+                open={isModalVisible}
                 onCancel={hideAddEventModal}
                 onAddEvent={handleAddEvent}
             />
