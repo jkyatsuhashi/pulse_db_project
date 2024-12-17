@@ -21,7 +21,7 @@ const CalendarParent = ({ userId, host, port }) => {
             setLoading(false);
             return;
         }
-
+    
         try {
             const response = await fetch(`http://${host}:${port}/api/calendar`, {
                 method: 'POST',
@@ -31,14 +31,14 @@ const CalendarParent = ({ userId, host, port }) => {
                     user_id: userId
                 })
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Error fetching events: ${response.statusText}`);
             }
-
+    
             const data = await response.json();
-            console.log(data)
-
+            console.log('Loaded events:', data); // Add this log to ensure correct data is fetched
+    
             if (data.events) {
                 const normalizedEvents = data.events.map(evt => ({
                     ...evt,
@@ -57,7 +57,7 @@ const CalendarParent = ({ userId, host, port }) => {
             setLoading(false);
         }
     }, [userId, host, port]);
-
+    
     useEffect(() => {
         loadEventData();
     }, [userId, host, port, location, loadEventData]);
@@ -93,7 +93,7 @@ const CalendarParent = ({ userId, host, port }) => {
 
     const handleRemoveEvent = async (eventToRemove) => {
         const { location, date } = eventToRemove;
-
+    
         try {
             const response = await fetch(`http://${host}:${port}/api/calendar`, {
                 method: 'POST',
@@ -105,18 +105,21 @@ const CalendarParent = ({ userId, host, port }) => {
                     date: date
                 })
             });
-
+    
             const data = await response.json();
-            if (data.message && data.message.includes("deleted successfully")) {
-                await loadEventData();
-            } else if (data.error) {
-                setError(data.error);
-            }
+            await loadEventData()
+            // if (data.message === "Event removed successfully") {
+            //     await loadEventData();  // Reload events after removal
+            // } else if (data.error) {
+            //     setError(data.error);
+            // }
         } catch (err) {
             console.error('Error removing event:', err);
             setError('Failed to remove event.');
         }
     };
+    
+    
 
     if (!userId) {
         return (

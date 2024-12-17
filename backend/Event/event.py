@@ -1,5 +1,5 @@
 from flask import jsonify
-from MySQLdb.cursors import DictCursor
+from MySQLdb.cursors import DictCursor #type: ignore
 from datetime import datetime, timedelta
 import random
 
@@ -14,6 +14,10 @@ def get_event_users(mysql, data):
             WHERE EventUsers.event_id = %s AND EventUsers.user_id = Users.user_id
         """, (event_id,))
         users = cursor.fetchall()
+        for user in users:
+            # Extract the numeric part of the username, increment it, and update the username
+            current_number = int(user['username'].replace('user', ''))
+            user['username'] = f"user{current_number + 1}"
         response = {
             "status": "success",
             "message": users
@@ -42,7 +46,6 @@ def set_attendance(mysql, data):
             SELECT * FROM EventUsers WHERE user_id = %s AND event_id = %s
         """, (user_id, event_id))
         record = cursor.fetchone()
-
         if record:
             cursor.execute("""
                 UPDATE EventUsers SET is_attending = %s

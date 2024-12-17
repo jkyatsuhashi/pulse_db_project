@@ -5,6 +5,7 @@ from flask import jsonify  # type: ignore
 def login(mysql, data):
     username = data.get("username")
     password = data.get("password")
+    print(username)
     try:
         curr = mysql.connection.cursor(DictCursor)
         curr.execute(
@@ -21,7 +22,7 @@ def login(mysql, data):
         if bcrypt.checkpw(password.encode('utf-8'), response["password"].encode('utf-8')):
             filtered_response = {
                 "username": response["username"],
-                "user_id": response["user_id"],
+                "user_id": response["user_id"] -1 ,
                 "address": response["address"]
             }
             result = {"status": "success", "message": filtered_response}

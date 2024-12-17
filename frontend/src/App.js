@@ -26,6 +26,7 @@ function App() {
         const { username, address, user_id } = result.message;
 
         const loggedInUser = { username, address, userId: user_id };
+        console.log(loggedInUser)
         setUser(loggedInUser); 
         localStorage.setItem('user', JSON.stringify(loggedInUser)); 
         return { status: "success" }; 

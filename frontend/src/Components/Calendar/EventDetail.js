@@ -28,11 +28,12 @@ export default function EventDetail() {
                 const data = await response.json();
                 
                 if (data.status === "success") {
-                    // Note: using 'message' instead of 'response'
-                    setUsers(data.message);
+                    // Convert message tuple into an array
+                    const userArray = Object.values(data.message);
+                    setUsers(userArray);
                     
                     // Find the current user based on the user_id passed in event state
-                    const currentUserData = data.message.find(
+                    const currentUserData = userArray.find(
                         user => user.user_id === event.user_id
                     );
                     

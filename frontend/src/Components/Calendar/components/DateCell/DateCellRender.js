@@ -1,30 +1,29 @@
-import React from 'react';
-import dayjs from 'dayjs';
-import { Button } from 'antd';
-
 const DateCellRender = ({ value, events, handleEventClick, onRemoveEvent }) => {
-    const cellDate = value.format('YYYY-MM-DD');
-    const dailyEvents = events.filter(evt => evt.date === cellDate);
+    const dayEvents = events.filter(event => event.date === value.format('YYYY-MM-DD'));
+
+    const handleRemoveClick = (event, e) => {
+        e.stopPropagation(); // Prevent event click handler from being triggered
+        onRemoveEvent(event);
+    };
 
     return (
-        <div style={{ minHeight: '50px' }}>
-            {dailyEvents.map((evt, index) => (
-                <div
-                    key={index}
-                    style={{ background: '#e6f7ff', marginBottom: '2px', padding: '2px', cursor: 'pointer' }}
-                    onClick={() => handleEventClick(evt)} 
-                >
-                    {evt.title || 'Untitled Event'}
-                    <Button
-                     onClick={() => onRemoveEvent(evt)}
-                     style={{ marginLeft: '8px', color: 'red'}}
+        <div>
+            {dayEvents.map(event => (
+                <div key={event.event_id} className="event-item">
+                    <div
+                        onClick={(e) => handleEventClick(event, e)} 
+                        className="event-details"
                     >
-                     Remove
-                    </Button>
+                        {event.title}
+                    </div>
+                    <button 
+                        onClick={(e) => handleRemoveClick(event, e)} 
+                    >
+                        Remove
+                    </button>
                 </div>
             ))}
         </div>
     );
 };
-
-export default DateCellRender;
+export default DateCellRender

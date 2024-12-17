@@ -8,7 +8,6 @@ def get_calendar(mysql, data):
     if not user_id:
         return jsonify({"error": "user_id is required"}), 400
 
-    adjusted_user_id = user_id - 1  
 
     location = data.get("location")
     date_str = data.get("date")
@@ -17,7 +16,7 @@ def get_calendar(mysql, data):
 
     cursor = mysql.connection.cursor(DictCursor)
 
-    cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (adjusted_user_id,))
+    cursor.execute("SELECT COUNT(*) AS cnt FROM Users WHERE user_id = %s", (user_id,))
     if cursor.fetchone()["cnt"] == 0:
         cursor.close()
         return jsonify({"error": "User not found"}), 404
@@ -36,7 +35,7 @@ def get_calendar(mysql, data):
         JOIN Events e ON eu.event_id = e.event_id
         WHERE eu.user_id = %s
         ORDER BY e.date;
-    """, (adjusted_user_id,))
+    """, (user_id,))
 
     events = []
     for row in cursor.fetchall():
@@ -117,7 +116,6 @@ def remove_event(mysql, data):
     location = data.get("location")
     date_str = data.get("date")
     title = data.get("title")
-
     if not user_id or not location or not date_str:
         return jsonify({"error": "user_id, location, and date are required"}), 400
 
@@ -146,16 +144,12 @@ def remove_event(mysql, data):
             WHERE user_id = %s AND location = %s AND date = %s
             """, (user_id, location, event_date))
 
-        cursor.execute("""
-            DELETE FROM Events 
-            WHERE location = %s AND date = %s
-            """, (location, event_date))
-
         mysql.connection.commit()
         cursor.close()
 
         return jsonify({"message": f"{title if title else 'Event'} deleted successfully"}), 200
     except Exception as e:
+        print(e)
         mysql.connection.rollback()
         cursor.close()
         return jsonify({"error": str(e)}), 500

@@ -12,10 +12,12 @@ const CalendarChild = ({ events = [], onRemoveEvent }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const navigate = useNavigate();
 
-    const handleEventClick = (event) => {
-        console.log(event)
+    const handleEventClick = (event, e) => {
+        // Prevent navigation when the remove button is clicked
+        if (e.target.tagName === "BUTTON") return;
         navigate(`/event/${event.event_id}`, { state: { event } });
     };
+    
 
     const handleDateSelect = (date) => {
         setSelectedDate(date);

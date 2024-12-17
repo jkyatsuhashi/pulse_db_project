@@ -1,0 +1,43 @@
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+/var/www/html/cse30246/pulse/pulse_db_project/myenv/lib64/python3.6/site-packages/apscheduler/util.py:409: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return tzinfo.localize(dt)
+ * Running on http://db8.cse.nd.edu:5077/ (Press CTRL+C to quit)
+ * Restarting with stat
+/var/www/html/cse30246/pulse/pulse_db_project/myenv/lib64/python3.6/site-packages/apscheduler/util.py:409: PytzUsageWarning: The localize method is no longer necessary, as this time zone supports the fold attribute (PEP 495). For more details on migrating to a PEP 495-compliant implementation, see https://pytz-deprecation-shim.readthedocs.io/en/latest/migration.html
+  return tzinfo.localize(dt)
+ * Debugger is active!
+ * Debugger PIN: 627-227-624
+129.74.120.164 - - [16/Dec/2024 20:17:05] "OPTIONS /api/login HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:05] "POST /api/login HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:17] "OPTIONS /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:17] "OPTIONS /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:17] "POST /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:17] "POST /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:21] "OPTIONS /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:21] "OPTIONS /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:21] "[33mPOST /api/calendar HTTP/1.1[0m" 404 -
+129.74.120.164 - - [16/Dec/2024 20:17:21] "POST /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:21] "POST /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:25] "POST /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:25] "POST /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:26] "OPTIONS /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:26] "OPTIONS /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:26] "POST /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:26] "POST /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:28] "OPTIONS /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:28] "[33mPOST /api/calendar HTTP/1.1[0m" 404 -
+129.74.120.164 - - [16/Dec/2024 20:17:28] "OPTIONS /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:28] "POST /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:28] "POST /api/event HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:29] "POST /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:17:29] "POST /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:23:37] "OPTIONS /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:23:37] "OPTIONS /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:23:37] "POST /api/calendar HTTP/1.1" 200 -
+129.74.120.164 - - [16/Dec/2024 20:23:37] "POST /api/calendar HTTP/1.1" 200 -
+[2024-12-16 20:30:00.003553] Triggering random event generation...
+[2024-12-16 20:30:00.098381] Generated event response: {'event': {'assigned_users': [130, 190, 24], 'date': '2024-12-24', 'location': '3473 South 27th Street, Milwaukee, WI, 53215'}, 'message': 'Random Restaurant event created in Indiana or Michigan with local users assigned.'}
